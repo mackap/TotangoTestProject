@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TestTaskTotango</string>
+    <string name="author">&#160;Author:&#160; </string>
+    <string name="comments">Comments:&#160;</string>
+    <string name="hors_ago">&#160; hours ago</string>
+    <string name="full_size_image_not_exist">Image doesnt exist!</string>
 </resources>

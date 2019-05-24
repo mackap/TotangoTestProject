@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent" android:layout_height="match_parent">
+    <ImageView
+            android:id="@+id/iv_post_list"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"/>
+    <TextView
+            android:id="@+id/tv_title_post_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="8dp"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:layout_toRightOf="@+id/iv_post_list"
+            tools:text="Title to post"/>
+    <TextView
+            android:id="@+id/tv_date_post_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_title_post_list"
+            android:layout_toRightOf="@+id/iv_post_list"
+            tools:text="X hours ago"/>
+    <TextView
+            android:id="@+id/tv_author_post_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_title_post_list"
+            android:layout_toRightOf="@+id/tv_date_post_list"
+
+            tools:text="Author name"/>
+
+    <TextView
+            android:id="@+id/tv_comments_post_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_author_post_list"
+            android:layout_toRightOf="@+id/iv_post_list"
+            tools:text="comments 63"/>
+    <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_below="@+id/tv_comments_post_list"
+            android:background="@color/colorPrimaryDark"/>
+</RelativeLayout>
