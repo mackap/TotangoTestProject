@@ -24,10 +24,12 @@ class TopListPresenter(topListModel: TopListMVP.ITopListModel) : TopListMVP.ITop
     @SuppressLint("CheckResult")
     override fun loadData() {
         mTopListView!!.showProgress(true)
+        mCurrentScreenState = ScreenState.SHOW_PROGRESS
         mTopListModel.loadData().subscribe({
             mCurrentScreenState = ScreenState.SHOW_DATA
             mTopListView!!.showData(mTopListModel.getData())
         },{
+            mCurrentScreenState = ScreenState.SHOW_ERROR
             mCurrentErrorMessage = it.message.toString()
             mTopListView!!.showErrorMessage(mCurrentErrorMessage)
         })

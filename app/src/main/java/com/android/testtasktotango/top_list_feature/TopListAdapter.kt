@@ -1,8 +1,6 @@
 package com.android.testtasktotango.top_list_feature
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +10,6 @@ import com.android.testtasktotango.core_comp.IRecItemClickListener
 import com.android.testtasktotango.core_comp.data.pojo.Post
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.post_item.view.*
-import java.net.URL
 
 
 /**

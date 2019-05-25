@@ -29,8 +29,6 @@ import javax.inject.Inject
 class TopListActivity : AppCompatActivity(), TopListMVP.ITopListView, IRecItemClickListener {
 
     private val screenSize: Point = Point()
-    private var screenHeight: Int = 0
-    private var screenWidth: Int = 0
     private var mSelectedImageThumb: String? = null
     @Inject
     lateinit var mTopListPresenter: TopListMVP.ITopListPresenter
@@ -38,6 +36,8 @@ class TopListActivity : AppCompatActivity(), TopListMVP.ITopListView, IRecItemCl
     lateinit var mLayoutManager: LinearLayoutManager
     var compositDisposable: CompositeDisposable = CompositeDisposable()
     val WRITE_PERMISSION = 12345
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         (application as TotangoApplication).getTopListComponent()?.injectIntoActivity(this)
         super.onCreate(savedInstanceState)
@@ -101,7 +101,8 @@ class TopListActivity : AppCompatActivity(), TopListMVP.ITopListView, IRecItemCl
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 val totalItemCount = recyclerView.layoutManager!!.itemCount
-                if (mTopListPresenter.getCurrentState() == ScreenState.SHOW_DATA
+                if ((mTopListPresenter.getCurrentState() == ScreenState.SHOW_DATA||
+                            mTopListPresenter.getCurrentState() == ScreenState.SHOW_ERROR)
                     && totalItemCount == mLayoutManager.findLastVisibleItemPosition() + 1
                 ) {
                     mTopListPresenter.loadData()
