@@ -4,11 +4,8 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Point
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -22,18 +19,17 @@ import com.android.testtasktotango.core_comp.IRecItemClickListener
 import com.android.testtasktotango.core_comp.ScreenState
 import com.android.testtasktotango.core_comp.data.pojo.Post
 import com.android.testtasktotango.top_list_feature.di.TopListMVP
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.top_post_list_activity.*
-import java.net.URL
 import javax.inject.Inject
 
 
 class TopListActivity : AppCompatActivity(), TopListMVP.ITopListView, IRecItemClickListener {
 
-    private var screenHeight: Int =0
+    private val screenSize: Point = Point()
+    private var screenHeight: Int = 0
     private var screenWidth: Int = 0
     private var mSelectedImageThumb: String? = null
     @Inject
@@ -122,96 +118,43 @@ class TopListActivity : AppCompatActivity(), TopListMVP.ITopListView, IRecItemCl
         mSelectedImageThumb = imageUrl
         if (checkRuntimePermission())
             compositDisposable.add(
-                Single.fromCallable {
-                    loadBitmap(imageUrl)
-                }
+                mTopListPresenter.loadBitmap(imageUrl)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe({
-                        var optimizedBitmpap = saveImageInStorage(it, imageUrl)
-                        showImage(optimizedBitmpap)
+                        val optimizedBitmap = mTopListPresenter.processingBitmap(it, imageUrl, screenSize)
+                        showImage(optimizedBitmap)
                     }, {
                         Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                     })
             )
     }
 
-    private fun showImage(optimizedBitmap: String) {
+    private fun showImage(optimizedBitmap: Bitmap?) {
         val iv = ImageView(this)
-        iv.setImageBitmap(getOptimizedBitmap(optimizedBitmap))
+        iv.setImageBitmap(optimizedBitmap)
         val dialog: AlertDialog = AlertDialog.Builder(this).setView(iv).create()
         dialog.show()
     }
 
-    private fun saveImageInStorage(finalBitmap: Bitmap?, imageName: String?): String {
-        return MediaStore.Images.Media.insertImage(contentResolver, finalBitmap, imageName, null)
-    }
-
-    fun loadBitmap(url: String?): Bitmap? {
-        val newurl = URL(url)
-        return BitmapFactory.decodeStream(newurl.openConnection().getInputStream());
-    }
-
-    //// get scaled bitmap from storage
-    fun getOptimizedBitmap(loadedImageUri: String?): Bitmap? {
-
-
-
-        val imageUri = Uri.parse(loadedImageUri)
-        val bitmapOptions: BitmapFactory.Options = BitmapFactory.Options()
-        bitmapOptions.inJustDecodeBounds = true
-
-        BitmapFactory.decodeStream(contentResolver.openInputStream(imageUri), null, bitmapOptions)
-
-        bitmapOptions.inSampleSize = calculateInSampleSize(bitmapOptions, screenWidth, screenHeight)
-        bitmapOptions.inJustDecodeBounds = false
-
-        return BitmapFactory.decodeStream(contentResolver.openInputStream(imageUri), null, bitmapOptions)
-    }
 
     private fun getScreenSize() {
-        val display = getWindowManager().getDefaultDisplay();
-        val size = Point()
-        display.getSize(size)
-        screenWidth = size.x
-        screenHeight = size.y
+        val display = windowManager.defaultDisplay;
+        display.getSize(screenSize)
     }
 
-
-    //// calculate scale factor for show big images to prevent java.lang.RuntimeException: Canvas: trying to draw too large
-    fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
-        // Raw height and width of image
-        val (height: Int, width: Int) = options.run { outHeight to outWidth }
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
-    }
 
     private fun checkRuntimePermission(): Boolean {
-        return if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            == PackageManager.PERMISSION_GRANTED
-        ) {
-            true
-        } else {
+         if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 , WRITE_PERMISSION
             )
-            false
+           return false
         }
+        return true
     }
 
     override fun onRequestPermissionsResult(

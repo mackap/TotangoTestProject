@@ -45,7 +45,7 @@ class TopListAdapter(
         holder.tvComments.text = mContext.getString(R.string.comments) + post.numComments
         holder.tvDate.text = getHoursAgo(post.createdUtc.toLong()) + mContext.getString(R.string.hors_ago)
 
-
+        // This is the simplest common way to loading images
         Picasso.get().load(post.thumbnail).into(holder.ivThumb)
         holder.ivThumb.setOnClickListener {
             mItemClickListener.onItemClick(post.url)

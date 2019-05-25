@@ -20,7 +20,7 @@ class LocalStorageModule {
 
     @Provides
     @Singleton
-    fun provideLocalData(sharedPreferences: SharedPreferences):ILocalStorage{
-        return LocalStorage(sharedPreferences)
+    fun provideLocalData(sharedPreferences: SharedPreferences, context: Context):ILocalStorage{
+        return LocalStorage(sharedPreferences, context)
     }
 }
